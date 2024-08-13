@@ -2,29 +2,32 @@ package helper
 
 import (
 	"bytes"
-	"log"
+	"fmt"
 
 	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/renderer/html"
 )
 
-func ConvertMarkDownToHTML(markdown string) string {
-	// convert string to byte
-	markDownbyteContent := []byte(markdown)
-
+func ConvertMarkDownToHTML(markdown []byte) string {
 	var buf bytes.Buffer
 	md := goldmark.New(
-		goldmark.WithExtensions(extension.GFM),
+		goldmark.WithExtensions(
+			extension.GFM,
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("monokai"), // You can choose your preferred style
+				highlighting.WithGuessLanguage(true),
+			),
+		),
 		goldmark.WithRendererOptions(
 			html.WithHardWraps(),
 			html.WithXHTML(),
 		),
 	)
-
-	if err := md.Convert(markDownbyteContent, &buf); err != nil {
-		log.Fatal(err)
+	if err := md.Convert(markdown, &buf); err != nil {
+		fmt.Println("Error converting markdown to HTML:", err)
+		return ""
 	}
-
 	return buf.String()
 }

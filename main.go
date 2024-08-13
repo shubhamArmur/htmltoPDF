@@ -21,13 +21,6 @@ type Audit struct {
 }
 
 func main() {
-	// fileContent, err := os.ReadFile("ReadMe.md")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
-	// htmlContent := helper.Highli(fileContent)
-
 	fileContent, err := os.ReadFile("audit.json")
 	if err != nil {
 		fmt.Println(err)
@@ -52,34 +45,13 @@ func main() {
 	pdfg.MarginRight.Set(0)
 
 	// get markdown as html
-	documentation := helper.Highligher_Prism([]byte(audit.Documentation))
-	security := helper.Highligher_Prism([]byte(audit.Security))
-	codeFix := helper.Highligher_Prism([]byte(audit.CodeFix))
-	testcase := helper.Highligher_Prism([]byte(audit.Testcase))
+	documentation := helper.ConvertMarkDownToHTML([]byte(audit.Documentation))
+	security := helper.ConvertMarkDownToHTML([]byte(audit.Security))
+	codeFix := helper.ConvertMarkDownToHTML([]byte(audit.CodeFix))
+	testcase := helper.ConvertMarkDownToHTML([]byte(audit.Testcase))
 
 	htmlContent := helper.ReportCreator(documentation, security, codeFix, testcase)
 
-	// Set the HTML content
-	// htmlContent := `
-	// <!DOCTYPE html>
-	// <html>
-	// <head>
-	// 	<title>Audit Report</title>
-	// </head>
-	// <body>
-	// 	<h1>` + audit.Name + `</h1>
-	// 	<h2>Documentation</h2>
-	// 	<p>` + documentation + `</p>
-	// 	<h2>Audit</h2>
-	// 	<h2>Gas Optimisation</h2>
-	// 	<p>` + audit.GasOptimisation + `</p>
-	// 	<h2>Code Fix</h2>
-	// 	<p>` + codeFix + `</p>
-	// 	<h2>Testcase</h2>
-	// 	<p>` + testcase + `</p>
-	// 	<h2>Security</h2>
-	// 	<p>` + security + `</p>
-	// `
 	pdfg.AddPage(wkhtmltopdf.NewPageReader(strings.NewReader(htmlContent)))
 
 	// Create PDF document in buffer

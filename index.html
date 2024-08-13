@@ -6,85 +6,451 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audit Report</title>
     <style>
-        * {
-            line-height: 1.6;
-            letter-spacing: 1.4px;
-        }
-
-        body {
+        main {
+            max-width: 794px;
+            width: 794px;
             background-color: #000000;
+            padding: 50px;
+            box-sizing: border-box;
             color: #ffffff;
-            padding: 10px;
             font-family: Arial, Helvetica, sans-serif;
         }
 
-        h1 {
-            margin-top: 2.5rem;
-            margin-bottom: 2.5rem;
-            color: #FFFFFFE5;
-            font-size: 2.25rem;
-            font-weight: 600;
-            line-height: 1.8125rem;
-            letter-spacing: normal;
-            text-align: left;
+        main h1 {
+            color: #ffffff;
+            text-align: center;
+            padding-bottom: 20px;
         }
 
-        h2,
+        main h2,
         h3,
         h4,
-        h5 {
+        h5,
+        h6 {
             color: #66bb6a;
         }
 
-        h1::after {
-            display: block;
-            content: "";
-            height: 0.25rem;
-            margin-top: 10px;
-            color: #01efff;
-            width: 100%;
-            background: linear-gradient(90deg, #01efff 0%, #ef88fb 46.6%, #000000 97.6%);
-        }
-
-        pre {
-            font-size: 20px;
+        main pre {
+            font-size: 16px;
             padding: 20px;
             border-radius: 5px;
             box-sizing: border-box;
             margin-left: 20px;
             margin-right: 20px;
+            max-width: 100%;
         }
     </style>
 </head>
 
 <body>
-    <h1></h1>
-    <h2>Overview</h2>
-    <p><code>MyContract</code> is a Solidity smart contract designed to manage deposits, withdrawals, and batch
-        transactions, as well as to perform gambling and gas-wasting functions. The contract has various functions that
-        users can interact with by sending transactions using an Ethereum client. Below is a thorough explanation of the
-        functionalities and best practices related to this contract.</p>
-    <h2>Contract Details</h2>
-    <h3>State Variables</h3>
-    <ul>
-        <li><code>address public owner</code>: the address of the contract owner.</li>
-        <li><code>uint public balance</code>: the balance of the contract in wei.</li>
-        <li><code>string private secret</code>: a hardcoded secret string that is not accessible externally.</li>
-        <li><code>uint internalValue</code>: an internal value that holds state but is not exposed.</li>
-    </ul>
+    <main>
 
-    <h5>Solution:</h5>
-    <p>To prevent reentrancy, use the Checks-Effects-Interactions pattern. Ensure that all effects (e.g., balance
-        updates)
-        occur before interacting with external contracts.</p>
-    <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">withdraw</span>(<span style="color:#66d9ef">uint</span> amount) <span style="color:#66d9ef">public</span> {
+        <h1></h1>
+        <h2>Overview</h2>
+        <p><code>MyContract</code> is a Solidity smart contract designed to manage deposits, withdrawals, and batch
+            transactions, as well as to perform gambling and gas-wasting functions. The contract has various functions
+            that
+            users can interact with by sending transactions using an Ethereum client. Below is a thorough explanation of
+            the
+            functionalities and best practices related to this contract.</p>
+        <h2>Contract Details</h2>
+        <h3>State Variables</h3>
+        <ul>
+            <li><code>address public owner</code>: the address of the contract owner.</li>
+            <li><code>uint public balance</code>: the balance of the contract in wei.</li>
+            <li><code>string private secret</code>: a hardcoded secret string that is not accessible externally.</li>
+            <li><code>uint internalValue</code>: an internal value that holds state but is not exposed.</li>
+        </ul>
+        <h3>Constructor</h3>
+        <p>The constructor sets the <code>owner</code> state variable to the address of the account that deploys the
+            contract.
+        </p>
+        <h3>Deposit Function</h3>
+        <p>The <code>deposit</code> function allows any user to send Ether to the contract which adds to the contract's
+            balance.
+            The function is marked <code>payabe</code> to accept Ether and increment the <code>balance</code> variable
+            by the
+            amount sent.</p>
+        <h3>Withdraw Function</h3>
+        <p>Allows only the owner to withdraw a specified amount from the contract balance and send it to the owner's
+            address. It
+            checks whether the contract has sufficient balance before proceeding with the withdrawal and updating the
+            balance.
+        </p>
+        <h3>BatchSend Function</h3>
+        <p>Takes an array of addresses and sends a set amount of Ether to each address in the array. A <code>for</code>
+            loop is
+            used to iterate over the recipients list; however, this approach could hit gas limits for large arrays of
+            addresses,
+            and if one transfer fails, the entire batch is reverted.</p>
+        <h3>Random Function</h3>
+        <p>Returns a pseudo-random number generated from the previous block hash to emulate randomness. It's important
+            to note
+            that this method is not secure for any critical randomness as it can be manipulated by miners.</p>
+        <h3>Gamble Function</h3>
+        <p>A gambling function that sends 1 ether to the sender if a pseudo-randomly generated number is even. Due to
+            its use of
+            the inferior random function and the hardcoded gas value, this method can be prone to exploits and errors.
+        </p>
+        <h3>WasteGas Function</h3>
+        <p>An infinite loop that consumes all the gas sent to the transaction. This function serves no practical use
+            other than
+            to drain ether and should not be included in production contracts.</p>
+        <h3>Donate Function</h3>
+        <p>Accepts donations but does not track them. Donated Ether gets trapped in the contract as there is no function
+            to move
+            Ether out of the contract afterward.</p>
+        <h3>HashFunction</h3>
+        <p>Takes a string and a salt and returns a keccak256 hash of the encoded values. This is a pure function that
+            doesn't
+            alter the blockchain state.</p>
+        <h3>UselessFunction</h3>
+        <p>An example of a function that executes a simple calculation but without storing or returning the result. Such
+            a
+            function serves no purpose in a smart contract.</p>
+        <h3>CompareFloats Function</h3>
+        <p>Compares two float values for equality after converting them to integers. While the conversion attempt is
+            there,
+            storing floats in Solidity requires careful manipulation due to the lack of native float support.</p>
+        <h3>SignMessage Function</h3>
+        <p>Takes a string message, encodes it, and returns a keccak256 hash of the encoded message. This could be part
+            of a
+            signature system within the contract.</p>
+        <h3>ChangeOwner Function</h3>
+        <p>Allows the <code>owner</code> to transfer ownership of the contract to the sender of the transaction if it
+            meets the
+            check that <code>tx.origin</code> matches the current owner.</p>
+        <h2>Best Practices and Security Considerations</h2>
+        <ul>
+            <li><strong>Avoid using <code>tx.origin</code></strong>: The <code>changeOwner</code> function uses
+                <code>tx.origin</code> to check the transaction originator, which poses security risks. Use
+                <code>msg.sender</code> for authentication instead.
+            </li>
+            <li><strong>Check effects-interactions</strong>: The contract's <code>withdraw</code> and
+                <code>batchSend</code>
+                functions send Ether before updating the contract's balance. To prevent reentrancy attacks, follow the
+                checks-effects-interactions pattern.
+            </li>
+            <li><strong>Prevent reentrancy</strong>: The contract is not protected against reentrancy. The use of
+                <code>call</code> to transfer Ether can make the contract susceptible to a reentrancy attack (SWC-107).
+            </li>
+            <li><strong>Optimize gas usage</strong>: The <code>wasteGas</code> method and <code>uselessFunction</code>
+                indicate
+                non-optimal gas usage. Avoid loops that could run indefinitely or consume all the gas available.</li>
+            <li><strong>Security of randomness</strong>: The <code>random</code> function uses insecure randomness which
+                is not
+                suitable for high-value decisions or games of chance.</li>
+            <li><strong>Batch transactions</strong>: The <code>batchSend</code> function should implement safeguards to
+                handle
+                variable array sizes and ensure that failures in one transfer don't cause all others to revert.</li>
+        </ul>
+        <h2>Conclusion</h2>
+        <p>This documentation provides insights into the design and functionality of the <code>MyContract</code> smart
+            contract.
+            Solidity developers must be aware of the potential security implications of each function and follow best
+            practices
+            in smart contract development to create secure and efficient contracts.</p>
+
+        <p>The Solidity code snippet provided for <code>MyContract</code> contains several critical and minor security,
+            design,
+            and best practices issues that could result in vulnerabilities or inefficiencies. Below, I'll describe the
+            main
+            issues identified and propose solutions for each.</p>
+        <h3>Security Issues</h3>
+        <h4>1. Reentrancy (SWC-107)</h4>
+        <p>The <code>withdraw</code> function is vulnerable to reentrancy attacks because it adjusts the contract's
+            balance
+            after sending Ether to an external address. This flaw could allow attackers to drain the contract's funds by
+            recursively calling the <code>withdraw</code> function before its balance is updated.</p>
+        <h5>Solution:</h5>
+        <p>To prevent reentrancy, use the Checks-Effects-Interactions pattern. Ensure that all effects (e.g., balance
+            updates)
+            occur before interacting with external contracts.</p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">withdraw</span>(<span style="color:#66d9ef">uint</span> amount) <span style="color:#66d9ef">public</span> {
 </span></span><span style="display:flex;"><span>    require(balance <span style="color:#f92672">&gt;=</span> amount, <span style="color:#e6db74">&#34;Insufficient balance&#34;</span>);
 </span></span><span style="display:flex;"><span>    balance <span style="color:#f92672">-=</span> amount; <span style="color:#75715e">// update balance first
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    (<span style="color:#66d9ef">bool</span> success, ) <span style="color:#f92672">=</span> msg.sender.call{value<span style="color:#f92672">:</span> amount}(<span style="color:#e6db74">&#34;&#34;</span>);
 </span></span><span style="display:flex;"><span>    require(success, <span style="color:#e6db74">&#34;Transfer failed&#34;</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre>
-    <h4>2. Transaction Order Dependence (SWC-114)</h4>
+        <h4>2. Transaction Order Dependence (SWC-114)</h4>
+        <p>The <code>batchSend</code> function might be vulnerable to front-running attacks, where an attacker can see
+            pending
+            transactions and try to place their own transaction first to affect the outcome of <code>batchSend</code>.
+        </p>
+        <h5>Solution:</h5>
+        <p>Consider using a commit-reveal scheme or other mechanisms that ensure transaction ordering does not impact
+            fairness
+            or outcomes significantly.</p>
+        <h4>3. Hardcoded Gas Amount (SWC-134)</h4>
+        <p>In the <code>gamble</code> function, specifying a fixed amount of gas for a <code>call</code> operation can
+            lead to
+            unexpected behavior, especially with future changes in how gas is calculated or used by EVM operations.</p>
+        <h5>Solution:</h5>
+        <p>Avoid hardcoding gas limits for external calls unless you have a very specific reason. Let the EVM manage the
+            gas:
+        </p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span>(<span style="color:#66d9ef">bool</span> success, ) <span style="color:#f92672">=</span> msg.sender.call{value<span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">ether</span>}(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span></code></pre>
+        <h3>Design and Best Practices Issues</h3>
+        <h4>1. Use of <code>tx.origin</code></h4>
+        <p>Using <code>tx.origin</code> for authorization in <code>changeOwner</code> can lead to security
+            vulnerabilities,
+            especially in cases where a contract rather than an EOA calls <code>changeOwner</code>.</p>
+        <h5>Solution:</h5>
+        <p>Use <code>msg.sender</code> for direct authorization checks.</p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">changeOwner</span>() <span style="color:#66d9ef">public</span> {
+</span></span><span style="display:flex;"><span>    require(msg.sender <span style="color:#f92672">==</span> owner, <span style="color:#e6db74">&#34;Not the owner&#34;</span>);
+</span></span><span style="display:flex;"><span>    owner <span style="color:#f92672">=</span> msg.sender;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre>
+        <h4>2. Public Visibility of Sensitive Information</h4>
+        <p>The variable <code>secret</code> is declared as <code>private</code>, but it is still visible to the entire
+            blockchain. Storing plain secrets on-chain is not secure.</p>
+        <h5>Solution:</h5>
+        <p>Avoid storing sensitive information on the blockchain. If you must, use cryptographic techniques for data
+            privacy.
+        </p>
+        <h4>3. Unnecessary Functions and Variables</h4>
+        <p>The <code>uselessFunction</code>, <code>donate</code> (without functionality for withdrawals), and
+            <code>internalValue</code> which is not used, add bloat to the contract.
+        </p>
+        <h5>Solution:</h5>
+        <p>Remove unnecessary functions and variables to reduce contract size and complexity, ensuring efficiency and
+            clarity.
+        </p>
+        <h4>4. Lack of Secure Randomness</h4>
+        <p>The method used in <code>random</code> is deterministic and can be predicted by observing blockchain details.
+        </p>
+        <h5>Solution:</h5>
+        <p>For secure randomness, consider using Chainlink VRF or another secure, off-chain source of randomness.</p>
+        <h4>5. Floating Points Emulation</h4>
+        <p>Solidity does not support floating-point arithmetic natively. The method <code>compareFloats</code> attempts
+            to
+            emulate this behavior but can lead to inaccuracies or unexpected behavior due to division rounding.</p>
+        <h5>Solution:</h5>
+        <p>Avoid floating-point operations when possible. If necessary, use a well-established library or carefully
+            implement
+            fixed-point arithmetic methods.</p>
+        <h4>6. Ignoring Return Value of External Calls</h4>
+        <p>In several parts of the code (e.g., <code>withdraw</code>, <code>batchSend</code>, <code>gamble</code>), the
+            contract
+            makes external calls without handling the possibility that the external call might throw an exception other
+            than
+            out-of-gas or stack too deep errors.</p>
+        <h5>Solution:</h5>
+        <p>Always check the return value of external calls and handle exceptions appropriately.</p>
+        <h3>Conclusion</h3>
+        <p>This analysis covers the principal security concerns and best practices violations in the given Solidity
+            code.
+            Addressing these issues is crucial for creating secure, efficient, and reliable smart contracts. Always test
+            thoroughly and consider leveraging tools like Slither, Mythril, or auditing services for comprehensive
+            assessments.
+        </p>
+
+        <p>Certainly! Below is a detailed analysis of the identified issues from the SWC map, including the specific
+            issue
+            details, potential risks, fixes, and relevant code snippets.</p>
+        <h3>SWC-107: Reentrancy</h3>
+        <p><strong>Issue Detail</strong>: Reentrancy attacks can occur when a function makes an external call to an
+            untrusted
+            contract that can then re-enter into the original contract before the initial execution is complete. This
+            might lead
+            to unexpected behavior, including funds theft or corruption of state.</p>
+        <p><strong>How to Fix</strong>: Utilize the Checks-Effects-Interactions pattern to prevent reentrancy attacks.
+            First,
+            perform all checks, then adjust the state variables before finally interacting with other contracts.</p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">withdraw</span>(<span style="color:#66d9ef">uint</span> amount) <span style="color:#66d9ef">public</span> {
+</span></span><span style="display:flex;"><span>    require(balance <span style="color:#f92672">&gt;=</span> amount, <span style="color:#e6db74">&#34;Insufficient balance&#34;</span>);
+</span></span><span style="display:flex;"><span>    balance <span style="color:#f92672">-=</span> amount; <span style="color:#75715e">// Adjust the state variable before making the call
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// SWC-107: Reentrancy
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    (<span style="color:#66d9ef">bool</span> success, ) <span style="color:#f92672">=</span> msg.sender.call{value<span style="color:#f92672">:</span> amount}(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>    require(success, <span style="color:#e6db74">&#34;Transfer failed&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre>
+        <h3>SWC-135: Code With No Effects</h3>
+        <p><strong>Issue Detail</strong>: Code that performs operations without altering the state or having any effect
+            signifies dead code, leading to confusion and inefficiencies in gas usage.</p>
+        <p><strong>How to Fix</strong>: Remove or revise code snippets that do not achieve any operation affecting the
+            contract
+            state or logic.</p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">uselessFunction</span>() <span style="color:#66d9ef">public</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">1</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">// This operation has no effect
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre>
+        <h3>SWC-120: Weak Sources of Randomness from Chain Attributes</h3>
+        <p><strong>Issue Detail</strong>: Using blockchain attributes like blockhash for randomness can be predictable,
+            as
+            miners and participants have some influence over these values, leading to possible exploitation in games or
+            any
+            logic relying on unpredictability.</p>
+        <p><strong>How to Fix</strong>: Use a secure off-chain randomness source or a dedicated on-chain randomness
+            service like
+            Chainlink VRF (Verifiable Random Function) for tamper-proof randomness.</p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">random</span>() <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">view</span> <span style="color:#66d9ef">returns</span> (<span style="color:#66d9ef">uint</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">uint</span>(blockhash(block.number <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)); <span style="color:#75715e">// Predictable source of randomness
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre>
+        <h3>SWC-114: Transaction Order Dependence</h3>
+        <p><strong>Issue Detail</strong>: Reliance on the order of transactions can make a contract vulnerable to
+            front-running
+            attacks, where an attacker can see a pending transaction and insert their transaction beforehand.</p>
+        <p><strong>How to Fix</strong>: Make the contract's logic insensitive to the transaction order or use mechanisms
+            like
+            commit-reveal schemes to mitigate the risk.</p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">batchSend</span>(<span style="color:#66d9ef">address</span>[] <span style="color:#66d9ef">memory</span> recipients, <span style="color:#66d9ef">uint</span> amount) <span style="color:#66d9ef">public</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">uint</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> recipients.length; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// SWC-114: Transaction Order Dependence
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        (<span style="color:#66d9ef">bool</span> success, ) <span style="color:#f92672">=</span> recipients[i].call{value<span style="color:#f92672">:</span> amount}(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>        require(success, <span style="color:#e6db74">&#34;Transfer failed&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre>
+        <h3>SWC-104: Unchecked Call Return Value</h3>
+        <p><strong>Issue Detail</strong>: Failing to check the return value of external calls can lead to silent
+            failures where
+            the contract behaves as if the call was successful, even when it wasn't, potentially disrupting contract
+            logic.</p>
+        <p><strong>How to Fix</strong>: Always verify the return value of external calls to ensure they were successful.
+        </p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#75715e">// Included in multiple functions where:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>(<span style="color:#66d9ef">bool</span> success, ) <span style="color:#f92672">=</span> msg.sender.call{value<span style="color:#f92672">:</span> amount}(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>require(success, <span style="color:#e6db74">&#34;Transfer failed&#34;</span>);
+</span></span></code></pre>
+        <h3>SWC-123: Requirement Violation</h3>
+        <p><strong>Issue Detail</strong>: The use of <code>require</code> for input validation or to enforce conditions
+            is
+            crucial. Missing or incorrectly positioned <code>require</code> statements can lead to unexpected behavior
+            or
+            vulnerabilities.</p>
+        <p><strong>How to Fix</strong>: Ensure that all conditions are correctly validated with <code>require</code>
+            statements
+            before any changes to the contract state or ether transfers occur.</p>
+        <h3>SWC-131: Presence of Unused Variables</h3>
+        <p><strong>Issue Detail</strong>: Unused variables consume gas for their initialization and increase the
+            contract's size
+            unnecessarily, leading to inefficiencies.</p>
+        <p><strong>How to Fix</strong>: Identify and remove any variables that are declared but not used within the
+            contract.
+        </p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">uint</span> internalValue <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">// This variable is declared but never used
+</span></span></span></code></pre>
+        <h3>SWC-134: Message Call with Hardcoded Gas Amount</h3>
+        <p><strong>Issue Detail</strong>: Hardcoding a gas amount for message calls can lead to unexpected outcomes,
+            such as
+            failures if the specified amount of gas is insufficient due to changes in contract state or gas prices.</p>
+        <p><strong>How to Fix</strong>: Avoid hardcoding gas amounts. Instead, use all available gas with
+            <code>.call</code>
+            without specifying a gas limit or carefully analyze the required gas for the call.
+        </p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#75715e">// SWC-134: Message Call with Hardcoded Gas Amount
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>(<span style="color:#66d9ef">bool</span> success, ) <span style="color:#f92672">=</span> msg.sender.call{value<span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">ether</span>, gas<span style="color:#f92672">:</span> <span style="color:#ae81ff">1000</span>}(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>require(success, <span style="color:#e6db74">&#34;Transfer failed&#34;</span>);
+</span></span></code></pre>
+        <h3>SWC-115: Authorization through <code>tx.origin</code></h3>
+        <p><strong>Issue Detail</strong>: Using <code>tx.origin</code> for authorization checks can make a contract
+            susceptible
+            to phishing attacks, as <code>tx.origin</code> reflects the original sender of the transaction, not the
+            immediate
+            caller.</p>
+        <p><strong>How to Fix</strong>: Utilize <code>msg.sender</code> for authenticity checks instead of
+            <code>tx.origin</code> to ensure the direct caller is authorized.
+        </p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">changeOwner</span>() <span style="color:#66d9ef">public</span> {
+</span></span><span style="display:flex;"><span>    require(tx.origin <span style="color:#f92672">==</span> owner, <span style="color:#e6db74">&#34;Not the owner&#34;</span>); <span style="color:#75715e">// Vulnerable to phishing
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    owner <span style="color:#f92672">=</span> msg.sender;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre>
+        <p>For each fix, ensure thorough testing to validate that the changes effectively mitigate the identified risks
+            while
+            preserving contract functionality.</p>
+
+        <p>To test the provided Solidity smart contract using JavaScript, you will need to set up a testing environment,
+            typically using tools like Hardhat or Truffle. Below is an example of how you might write tests for this
+            contract
+            using Mocha (a JavaScript test framework) and Chai (an assertion library) within the Hardhat framework. This
+            script
+            would be one way to start testing the main functionalities of the &quot;MyContract&quot; smart contract.</p>
+        <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#75715e">// Importing the necessary libraries and frameworks
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">expect</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;chai&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">ethers</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;hardhat&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">describe</span>(<span style="color:#e6db74">&#34;MyContract&#34;</span>, <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">myContract</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">owner</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">addr1</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">addr2</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">addrs</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Deploy the contract before each test case
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">beforeEach</span>(<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">owner</span>, <span style="color:#a6e22e">addr1</span>, <span style="color:#a6e22e">addr2</span>, ...<span style="color:#a6e22e">addrs</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">ethers</span>.<span style="color:#a6e22e">getSigners</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">MyContract</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">ethers</span>.<span style="color:#a6e22e">getContractFactory</span>(<span style="color:#e6db74">&#34;MyContract&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">myContract</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">MyContract</span>.<span style="color:#a6e22e">deploy</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">deployed</span>();
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">describe</span>(<span style="color:#e6db74">&#34;Deployment&#34;</span>, <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;Should set the right owner&#34;</span>, <span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">expect</span>(<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">owner</span>()).<span style="color:#a6e22e">to</span>.<span style="color:#a6e22e">equal</span>(<span style="color:#a6e22e">owner</span>.<span style="color:#a6e22e">address</span>);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">describe</span>(<span style="color:#e6db74">&#34;Transactions&#34;</span>, <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;Should deposit and update balance&#34;</span>, <span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">addr1</span>).<span style="color:#a6e22e">deposit</span>({ <span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">ethers</span>.<span style="color:#a6e22e">utils</span>.<span style="color:#a6e22e">parseEther</span>(<span style="color:#e6db74">&#34;1.0&#34;</span>) });
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">expect</span>(<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">balance</span>()).<span style="color:#a6e22e">to</span>.<span style="color:#a6e22e">equal</span>(<span style="color:#a6e22e">ethers</span>.<span style="color:#a6e22e">utils</span>.<span style="color:#a6e22e">parseEther</span>(<span style="color:#e6db74">&#34;1.0&#34;</span>));
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;Should allow withdrawal if balance is sufficient&#34;</span>, <span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">addr1</span>).<span style="color:#a6e22e">deposit</span>({ <span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">ethers</span>.<span style="color:#a6e22e">utils</span>.<span style="color:#a6e22e">parseEther</span>(<span style="color:#e6db74">&#34;1.0&#34;</span>) });
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">addr1</span>).<span style="color:#a6e22e">withdraw</span>(<span style="color:#a6e22e">ethers</span>.<span style="color:#a6e22e">utils</span>.<span style="color:#a6e22e">parseEther</span>(<span style="color:#e6db74">&#34;1.0&#34;</span>));
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">expect</span>(<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">balance</span>()).<span style="color:#a6e22e">to</span>.<span style="color:#a6e22e">equal</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;Should fail withdrawal if balance is insufficient&#34;</span>, <span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">addr1</span>).<span style="color:#a6e22e">withdraw</span>(<span style="color:#a6e22e">ethers</span>.<span style="color:#a6e22e">utils</span>.<span style="color:#a6e22e">parseEther</span>(<span style="color:#e6db74">&#34;1.0&#34;</span>))).<span style="color:#a6e22e">to</span>.<span style="color:#a6e22e">be</span>.<span style="color:#a6e22e">revertedWith</span>(<span style="color:#e6db74">&#34;Insufficient balance&#34;</span>);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;Should allow batch send to multiple addresses&#34;</span>, <span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">owner</span>).<span style="color:#a6e22e">deposit</span>({ <span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">ethers</span>.<span style="color:#a6e22e">utils</span>.<span style="color:#a6e22e">parseEther</span>(<span style="color:#e6db74">&#34;3.0&#34;</span>) });
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">owner</span>).<span style="color:#a6e22e">batchSend</span>([<span style="color:#a6e22e">addr1</span>.<span style="color:#a6e22e">address</span>, <span style="color:#a6e22e">addr2</span>.<span style="color:#a6e22e">address</span>], <span style="color:#a6e22e">ethers</span>.<span style="color:#a6e22e">utils</span>.<span style="color:#a6e22e">parseEther</span>(<span style="color:#e6db74">&#34;1.0&#34;</span>));
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;Should prevent non-owner from changing owner&#34;</span>, <span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">expect</span>(<span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">addr1</span>).<span style="color:#a6e22e">changeOwner</span>()).<span style="color:#a6e22e">to</span>.<span style="color:#a6e22e">be</span>.<span style="color:#a6e22e">revertedWith</span>(<span style="color:#e6db74">&#34;Not the owner&#34;</span>);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;Owner should be able to change owner&#34;</span>, <span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">owner</span>).<span style="color:#a6e22e">changeOwner</span>();
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// Considering `changeOwner` does not accept an address, 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#75715e">// and it seems like a mistake that it just sets the current sender as the new owner,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#75715e">// we need to add a parameter to accept a new owner address or test it behaves as expected.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#a6e22e">expect</span>(<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">myContract</span>.<span style="color:#a6e22e">owner</span>()).<span style="color:#a6e22e">to</span>.<span style="color:#a6e22e">equal</span>(<span style="color:#a6e22e">owner</span>.<span style="color:#a6e22e">address</span>); <span style="color:#75715e">// This might need revision to reflect the test&#39;s intention
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    });
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">describe</span>(<span style="color:#e6db74">&#34;Gamble function&#34;</span>, <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">it</span>(<span style="color:#e6db74">&#34;Should sometimes succeed and sometimes fail&#34;</span>, <span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// This function is non-deterministic due to the use of blockhash for randomness.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      <span style="color:#75715e">// Testing it effectively would require a more sophisticated approach or understanding of the block context.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    });
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// More tests could be added here, such as for the `donate` and pure/view functions
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>});
+</span></span></code></pre>
+        <p>In practice, due to the inherent randomness in the <code>gamble</code> function, and certain assumptions made
+            (like
+            the implementation details of <code>changeOwner</code>, which seems flawed as it's implemented without
+            parameters
+            and will always fail the condition provided), tests might need to be adjusted.</p>
+        <p>Furthermore, <code>batchSend</code> doesn't modify &quot;balance&quot; which may be an oversight, so further
+            clarifications or adjustments to the contract may be necessary for meaningful tests.</p>
+
+
+    </main>
 </body>
 
 </html>
