@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Report</title>
+    <style>
+        * {
+            line-height: 1.6;
+            letter-spacing: 1.4px;
+        }
+
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        h1 {
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+            color: #FFFFFFE5;
+            font-size: 2.25rem;
+            font-weight: 600;
+            line-height: 1.8125rem;
+            letter-spacing: normal;
+            text-align: left;
+        }
+
+        h2,
+        h3,
+        h4,
+        h5 {
+            color: #66bb6a;
+        }
+
+        h1::after {
+            display: block;
+            content: "";
+            height: 0.25rem;
+            margin-top: 10px;
+            color: #01efff;
+            width: 100%;
+            background: linear-gradient(90deg, #01efff 0%, #ef88fb 46.6%, #000000 97.6%);
+        }
+
+        pre {
+            font-size: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1></h1>
+    <h2>Overview</h2>
+    <p><code>MyContract</code> is a Solidity smart contract designed to manage deposits, withdrawals, and batch
+        transactions, as well as to perform gambling and gas-wasting functions. The contract has various functions that
+        users can interact with by sending transactions using an Ethereum client. Below is a thorough explanation of the
+        functionalities and best practices related to this contract.</p>
+    <h2>Contract Details</h2>
+    <h3>State Variables</h3>
+    <ul>
+        <li><code>address public owner</code>: the address of the contract owner.</li>
+        <li><code>uint public balance</code>: the balance of the contract in wei.</li>
+        <li><code>string private secret</code>: a hardcoded secret string that is not accessible externally.</li>
+        <li><code>uint internalValue</code>: an internal value that holds state but is not exposed.</li>
+    </ul>
+
+    <h5>Solution:</h5>
+    <p>To prevent reentrancy, use the Checks-Effects-Interactions pattern. Ensure that all effects (e.g., balance
+        updates)
+        occur before interacting with external contracts.</p>
+    <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;"><code><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">withdraw</span>(<span style="color:#66d9ef">uint</span> amount) <span style="color:#66d9ef">public</span> {
+</span></span><span style="display:flex;"><span>    require(balance <span style="color:#f92672">&gt;=</span> amount, <span style="color:#e6db74">&#34;Insufficient balance&#34;</span>);
+</span></span><span style="display:flex;"><span>    balance <span style="color:#f92672">-=</span> amount; <span style="color:#75715e">// update balance first
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    (<span style="color:#66d9ef">bool</span> success, ) <span style="color:#f92672">=</span> msg.sender.call{value<span style="color:#f92672">:</span> amount}(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>    require(success, <span style="color:#e6db74">&#34;Transfer failed&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre>
+    <h4>2. Transaction Order Dependence (SWC-114)</h4>
+</body>
+
+</html>
